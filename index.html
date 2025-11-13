@@ -13,10 +13,12 @@
         .my-card {
             margin-bottom: 15px;
         }
+
         .completetodo {
             background: green;
 
         }
+
         .incompletetodo {
             background: rosybrown;
         }
@@ -29,6 +31,7 @@
         <div class="row">
             <div class="col-12">
                 <h1>ToDo List</h1>
+                <title-comp></title-comp>
             </div>
         </div>
 
@@ -36,10 +39,12 @@
             <div class="col-6">
                 <h3>List</h3>
                 <div v-for="(todo, index) in todos" :key="todo.id" class="card my-card" style="width: 18rem;">
-                    <div class="card-body" :class="{incompletetodo: todo.isDone}">
+                    <div class="card-body" :class="todo.isDone ? 'completetodo' : 'incompletetodo'">
+                        <h1>{{todo.id}}</h1>
                         <h5 class="card-title">{{ todo.name }}</h5>
                         <p class="card-text">{{ todo.description }}</p>
-                        <a href="#" class="btn btn-primary">done✅</a>
+                        <a href="#" class="btn btn-primary" @click="changeTodoStatus(todo)">{{ todo.isDone ? "done" :
+                            "undo" }}</a>
                     </div>
                 </div>
             </div>
@@ -48,32 +53,30 @@
                 <h3>Form</h3>
                 <form @submit.prevent="addTodo()">
                     <div class="mb-3">
-                    <label for="todo" class="form-label">Todo Name</label>
-                    <input v-model="todoName" type="text" class="form-control" id="todo"
-                        placeholder="enter your todo">
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea v-model="todoDescription" class="form-control" id="description" rows="3"></textarea>
-                </div>
-                <button class="btn btn-primary" type="submit">Submit</button>
+                        <label for="todo" class="form-label">Todo Name</label>
+                        <input v-model="todoName" type="text" class="form-control" id="todo"
+                            placeholder="enter your todo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea v-model="todoDescription" class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
                 </form>
-                <div>{{ todos }}</div>
-                
             </div>
 
         </div>
     </div>
-
+    <script src="components/TitleComp.js"></script>
     <script defer>
 
         Vue.createApp({
+            components: {
+                'title-comp': TitleComp
+            },
             data() {
                 return {
-                    todos: [
-                        { id: 1, name: "do", isDone: false, description: "longer text" },
-                        { id: 2, name: "make", isDone: true, description: "longer text" }
-                    ],
+                    todos: [],
                     todoName: '',
                     todoDescription: '',
                     isTodoCompleted: false
@@ -81,13 +84,50 @@
             },
             methods: {
                 addTodo() {
-                    this.todos.push({id: this.calculateNextId(), name: this.todoName, isDone: false, description: this.todoDescription})
-                    this.todoName =''
+                    this.todos.push({ id: this.calculateNextId(), name: this.todoName, isDone: false, description: this.todoDescription })
+                    this.todoName = ''
                     this.todoDescription = ''
+                    this.todos = this.sortByStatusAndId()
                 },
                 calculateNextId() {
                     return Math.max(...this.todos.map(todo => todo.id)) + 1
+                },
+                changeTodoStatus(todo) {
+                    todo.isDone = !todo.isDone
+                    this.todos = this.sortByStatusAndId()
+                },
+                sortByStatusAndId() {
+                    return this.todos.sort((a, b) => {
+                        // Сначала сортируем по статусу (невыполненные первыми)
+                        if (a.isDone !== b.isDone) {
+                            return a.isDone ? 1 : -1;
+                        }
+                        // Если статус одинаковый, сортируем по ID
+                        return a.id - b.id;
+                    });
                 }
+            },
+            mounted() {
+                let url = "http://localhost:8080/api/gettodos"
+                fetch(url)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("smth wrong")
+                    } else {
+                        return response.json()
+                    }
+                })
+                .then((data) => {
+                    this.todos = data.todos
+                })
+                .catch((error) => {
+                    let todos = [
+                        { id: 1, name: "do", isDone: false, description: "longer text" },
+                        { id: 2, name: "make", isDone: true, description: "longer text" }
+                    ]
+
+                    this.todos = todos
+                })
             }
 
         }).mount("#vue-app")
