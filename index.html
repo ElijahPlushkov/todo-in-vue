@@ -25,19 +25,59 @@
     </style>
 </head>
 
+<!-- <header>
+    <div class="container">
+        <div class="row">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                <div class="container-fluid">
+                    <img src="logo.jpg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                    <a class="navbar-brand" href="#">2DooUp</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">Home Page</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Productivity Hacks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About Us</a>
+                            </li>
+
+                        </ul>
+                        <form class="d-flex" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header> -->
+
 <body>
     <div class="container" id="vue-app">
 
+<header-comp>
+        <template v-slot:logo>
+            <logo-comp></logo-comp>
+        </template>
+    </header-comp>
+
         <div class="row">
             <div class="col-12">
-                <h1>ToDo List</h1>
                 <title-comp></title-comp>
             </div>
         </div>
 
         <div class="row">
             <div class="col-6">
-                <h3>List</h3>
                 <div v-for="(todo, index) in todos" :key="todo.id" class="card my-card" style="width: 18rem;">
                     <div class="card-body" :class="todo.isDone ? 'completetodo' : 'incompletetodo'">
                         <h1>{{todo.id}}</h1>
@@ -50,7 +90,6 @@
             </div>
 
             <div class="col-6">
-                <h3>Form</h3>
                 <form @submit.prevent="addTodo()">
                     <div class="mb-3">
                         <label for="todo" class="form-label">Todo Name</label>
@@ -67,12 +106,19 @@
 
         </div>
     </div>
+
+
     <script src="components/TitleComp.js"></script>
+    <script src="components/HeaderComp.js"></script>
+    <script src="components/LogoComp.js"></script>
     <script defer>
+
 
         Vue.createApp({
             components: {
-                'title-comp': TitleComp
+                'title-comp': TitleComp,
+                'header-comp': HeaderComp,
+                'logo-comp': LogoComp
             },
             data() {
                 return {
@@ -110,24 +156,24 @@
             mounted() {
                 let url = "http://localhost:8080/api/gettodos"
                 fetch(url)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("smth wrong")
-                    } else {
-                        return response.json()
-                    }
-                })
-                .then((data) => {
-                    this.todos = data.todos
-                })
-                .catch((error) => {
-                    let todos = [
-                        { id: 1, name: "do", isDone: false, description: "longer text" },
-                        { id: 2, name: "make", isDone: true, description: "longer text" }
-                    ]
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("smth wrong")
+                        } else {
+                            return response.json()
+                        }
+                    })
+                    .then((data) => {
+                        this.todos = data.todos
+                    })
+                    .catch((error) => {
+                        let todos = [
+                            { id: 1, name: "do", isDone: false, description: "longer text" },
+                            { id: 2, name: "make", isDone: true, description: "longer text" }
+                        ]
 
-                    this.todos = todos
-                })
+                        this.todos = todos
+                    })
             }
 
         }).mount("#vue-app")
