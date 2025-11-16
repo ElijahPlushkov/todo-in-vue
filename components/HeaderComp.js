@@ -4,7 +4,8 @@ const HeaderComp = {
         <div class="row">
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
-                <slot name="logo"></slot>
+                    <logo-comp :logo-dark="logoDark"></logo-comp>
+<!--                <slot name="logo"></slot>-->
                     <a class="navbar-brand" href="#">2DooUp</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -34,6 +35,10 @@ const HeaderComp = {
         </div>
 </header>
     `,
+  components: {
+    'logo-comp': LogoComp
+  },
+  props: ['logoDark'],
   data() {
     return {};
   },
