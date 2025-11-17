@@ -7,7 +7,7 @@ const TodoCardComp = {
                 <p class="card-text">{{ todo.description }}</p>
                 <a href="#" class="btn btn-primary" @click="$emit('change-todo-status', todo)">{{ todo.isDone ? "undo" :
                         "done" }}</a>
-                        <a href="#" class="btn btn-danger" @click="$emit('delete-todo')">delete todo</a>
+                        <a href="#" class="btn btn-danger" @click="$emit('delete-todo', todo.id)">delete todo</a>
             </div>
         </div>`,
     props: ['todo']

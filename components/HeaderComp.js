@@ -5,7 +5,6 @@ const HeaderComp = {
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
                     <logo-comp :logo-dark="logoDark"></logo-comp>
-<!--                <slot name="logo"></slot>-->
                     <a class="navbar-brand" href="#">2DooUp</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
