@@ -30,6 +30,9 @@
         .logoGreen {
             border: 2px solid green;
         }
+        .selected-todo-border {
+            border: 2px solid red;
+        }
     </style>
 </head>
 
@@ -45,22 +48,56 @@
 
     <div class="row">
         <div class="col-6">
-            <todo-card-comp :todo="todo" v-for="(todo, index) in todos" :key="todo.id" @change-todo-status="changeTodoStatus" @delete-todo="deleteTodo"></todo-card-comp>
+            <todo-card-comp v-for="(todo, index) in todos" :key="todo.id"
+                            :todo="todo"
+                            :selected-todo-id="selectedTodoId"
+                            @change-todo-status="changeTodoStatus"
+                            @delete-todo="deleteTodo"
+                            @select-todo-id="selectTodoId"
+
+            ></todo-card-comp>
         </div>
 
         <div class="col-6">
-            <form @submit.prevent="addTodo()">
-                <div class="mb-3">
-                    <label for="todo" class="form-label">Todo Name</label>
-                    <input v-model="todoName" type="text" class="form-control" id="todo"
-                           placeholder="enter your todo">
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea v-model="todoDescription" class="form-control" id="description" rows="3"></textarea>
-                </div>
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </form>
+            <button type="button" class="btn btn-outline-primary" @click="selectFormMode()">Todo Task</button>
+            <button type="button" class="btn btn-outline-success" @click="selectFormMode()">Subtask</button>
+
+            <div v-if="formMode === 'task'">
+                <form @submit.prevent="addTodo()">
+                    <h2>Todo Task</h2>
+                    <div class="mb-3">
+                        <label for="todo" class="form-label">Todo Name</label>
+                        <input v-model="todoName" type="text" class="form-control" id="todo"
+                               placeholder="enter your todo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea v-model="todoDescription" class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+            </div>
+            <div v-else>
+                <form>
+                    <h2>Subtask</h2>
+                    <div class="mb-3">
+                        <label for="subtask" class="form-label">Subtask name</label>
+                        <input v-model="subtaskName" type="text" class="form-control" id="subtask"
+                               placeholder="enter subtask">
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Estimated time</label>
+                        <input v-model="subtaskEstimatedTime" type="number" class="form-control" id="time"
+                               placeholder="enter time">
+                    </div>
+                    <div class="mb-3">
+                        <label for="executor" class="form-label">Executor</label>
+                        <input v-model="subtaskExecutor" type="text" class="form-control" id="executor"
+                               placeholder="enter a name">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+            </div>
         </div>
 
     </div>
@@ -86,7 +123,13 @@
                 todoDescription: '',
                 isTodoCompleted: false,
                 subTitle: 'good day',
-                cssClassLogo: 'logoGreen'
+                cssClassLogo: 'logoGreen',
+                formMode: 'task', // task and subtask
+
+                subtaskName: '',
+                subtaskExecutor: '',
+                subtaskEstimatedTime: '',
+                selectedTodoId: ''
             }
         },
         methods: {
@@ -124,6 +167,15 @@
             deleteTodo(id) {
                 this.todos = this.todos.filter((todo) => todo.id !== id)
                 this.todos = this.sortByStatusAndId()
+            },
+            selectFormMode() {
+                this.formMode = this.formMode === 'task' ? 'subtask' : 'task'
+            },
+            selectTodoId(id) {
+                this.formMode = 'subtask'
+                let todo = this.todos.find((todo) => todo.id === id)
+                this.selectedTodoId = todo.id
+                console.log(this.selectedTodoId)
             }
         },
         mounted() {
