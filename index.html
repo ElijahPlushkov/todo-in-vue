@@ -78,7 +78,7 @@
                 </form>
             </div>
             <div v-else>
-                <form>
+                <form @submit.prevent="addSubtasks(selectedTodoId)">
                     <h2>Subtask</h2>
                     <div class="mb-3">
                         <label for="subtask" class="form-label">Subtask name</label>
@@ -106,6 +106,7 @@
 <script src="components/LogoComp.js"></script>
 <script src="components/HeaderComp.js"></script>
 <script src="components/TitleComp.js"></script>
+<script src="components/SubtasksComp.js"></script>
 <script src="components/TodoCardComp.js"></script>
 
 <script defer>
@@ -129,7 +130,8 @@
                 subtaskName: '',
                 subtaskExecutor: '',
                 subtaskEstimatedTime: '',
-                selectedTodoId: ''
+                selectedTodoId: '',
+                subtasks: []
             }
         },
         methods: {
@@ -138,7 +140,8 @@
                     id: this.calculateNextId(),
                     name: this.todoName,
                     isDone: false,
-                    description: this.todoDescription
+                    description: this.todoDescription,
+                    subtasks: []
                 })
                 this.todoName = ''
                 this.todoDescription = ''
@@ -176,6 +179,18 @@
                 let todo = this.todos.find((todo) => todo.id === id)
                 this.selectedTodoId = todo.id
                 console.log(this.selectedTodoId)
+            },
+            addSubtasks(selectedTodoId) {
+                let todo = this.todos.find((todo) => selectedTodoId === todo.id)
+                let subtasks = todo.subtasks
+                subtasks.push ({
+                    subtaskName: this.subtaskName,
+                    subtaskExecutor: this.subtaskExecutor,
+                    subtaskEstimatedTime: this.subtaskEstimatedTime
+                })
+                this.subtaskName = ''
+                this.subtaskExecutor = ''
+                this.subtaskEstimatedTime = ''
             }
         },
         mounted() {
@@ -193,8 +208,8 @@
                 })
                 .catch((error) => {
                     let todos = [
-                        {id: 1, name: "do", isDone: false, description: "longer text"},
-                        {id: 2, name: "make", isDone: true, description: "longer text"}
+                        {id: 1, name: "do", isDone: false, description: "longer text", subtasks: []},
+                        {id: 2, name: "make", isDone: true, description: "longer text", subtasks: []}
                     ]
 
                     this.todos = todos
