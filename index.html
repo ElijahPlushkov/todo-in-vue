@@ -58,7 +58,7 @@
             ></todo-card-comp>
         </div>
 
-        <div class="col-6">
+        <div class="col-6 mb-3">
             <button type="button" class="btn btn-outline-primary" @click="selectFormMode()">Todo Task</button>
             <button type="button" class="btn btn-outline-success" @click="selectFormMode()">Subtask</button>
 
@@ -100,6 +100,8 @@
             </div>
         </div>
 
+        <server-errors-comp v-if="serverErrors.length > 0" :server-errors="serverErrors"></server-errors-comp>
+
     </div>
 </div>
 
@@ -107,15 +109,18 @@
 <script src="components/HeaderComp.js"></script>
 <script src="components/TitleComp.js"></script>
 <script src="components/SubtasksComp.js"></script>
+<script src="components/ServerErrorsComp.js"></script>
 <script src="components/TodoCardComp.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script defer>
 
     Vue.createApp({
         components: {
             'title-comp': TitleComp,
             'header-comp': HeaderComp,
-            'todo-card-comp': TodoCardComp
+            'todo-card-comp': TodoCardComp,
+            'server-errors-comp': ServerErrorsComp
         },
         data() {
             return {
@@ -131,7 +136,9 @@
                 subtaskExecutor: '',
                 subtaskEstimatedTime: '',
                 selectedTodoId: '',
-                subtasks: []
+                subtasks: [],
+
+                serverErrors: []
             }
         },
         methods: {
@@ -194,25 +201,25 @@
             }
         },
         mounted() {
-            let url = "http://localhost:8080/api/gettodos"
+            let url = "http://localhost:8010/api/todo/get-all"
             fetch(url)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("smth wrong")
+                        throw new Error("smth wrong, status code = " + response.status)
                     } else {
                         return response.json()
                     }
                 })
-                .then((data) => {
-                    this.todos = data.todos
+                .then((result) => {
+                    if (!result.success) {
+                        this.serverErrors = result.errors
+                    } else {
+                        let todos = result.data
+                        this.todos = todos
+                    }
                 })
                 .catch((error) => {
-                    let todos = [
-                        {id: 1, name: "do", isDone: false, description: "longer text", subtasks: []},
-                        {id: 2, name: "make", isDone: true, description: "longer text", subtasks: []}
-                    ]
-
-                    this.todos = todos
+                    console.log(error.message)
                 })
         }
 
