@@ -37,6 +37,34 @@ const cats = [
     }
 ];
 
+const shrektask = [
+    {
+        id: 1,
+        name: "Rescue Princess Fiona",
+        isDone: true,
+        description: "Complete the quest to rescue the princess from the dragon",
+        subtasks: [
+            {
+                subtaskName: "Find Donkey companion",
+                subtaskExecutor: "Shrek",
+                subtaskEstimatedTime: 30
+            },
+            {
+                subtaskName: "Navigate through fire swamp",
+                subtaskExecutor: "Shrek",
+                subtaskEstimatedTime: 60
+            }
+        ]
+    },
+    {
+        id: 2,
+        name: "Deal with Lord Farquaad",
+        isDone: false,
+        description: "Confront the ruler of Duloc about fairy tale creatures",
+        subtasks: []
+    }
+]
+
 // Общий формат ответа API
 const apiResponse = (success, errors, data) => ({
     success: success, // Boolean
@@ -65,6 +93,11 @@ app.get('/api/todo/get-all', (req, res) => {
 // Маршрут: GET /x
 app.get('/x', (req, res) => {
     res.json(apiResponse(true, [], cats));
+});
+
+// Маршрут: GET /api/shrek/get-tasks
+app.get('/api/shrek/get-tasks', (req, res) => {
+    res.json(apiResponse(true, [], shrektask));
 });
 
 // Порт (как в Go-версии)

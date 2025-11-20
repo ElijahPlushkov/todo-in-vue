@@ -1,14 +1,14 @@
 const TitleComp = {
     template: `
-    <div>
-        <h1>{{ title }}</h1>
-        <h2>{{ subTitle }}</h2>
-    </div>`,
+    <div class="text-center mb-4">
+        <h2>{{ title }}</h2>
+        <p class="subtitle">{{ subTitle }}</p>
+      </div>`,
     props: ['subTitle'],
 
     data() {
         return {
-            title: "ToDo List"
+            title: "Your Fairy Tale Tasks"
         }
     }
 }

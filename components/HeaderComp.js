@@ -1,44 +1,20 @@
 const HeaderComp = {
-  template: `
-    <header>
-        <div class="row">
-            <nav class="navbar navbar-expand-lg bg-body-tertiary">
-                <div class="container-fluid">
-                    <logo-comp :logo-dark="logoDark"></logo-comp>
-                    <a class="navbar-brand" href="#">2DooUp</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">Home Page</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Productivity Hacks</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">About Us</a>
-                            </li>
-
-                        </ul>
-                        <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
-                    </div>
-                </div>
-            </nav>
-        </div>
-</header>
+    template: `
+      <div class="row mb-4">
+          <div class="col-12 text-center">
+              <div class="d-flex align-items-center justify-content-center">
+              <logo-comp :logo-dark="logoDark"></logo-comp>
+              <h1 class="header-title">Shrek's Swamp Tasks</h1>
+              </div>
+              <p class="shrek-quote">"Ogres are like onions... we have layers!" - Let's peel back those todo layers!</p>
+            </div>
+      </div>
     `,
-  components: {
-    'logo-comp': LogoComp
-  },
-  props: ['logoDark'],
-  data() {
-    return {};
-  },
+    components: {
+        'logo-comp': LogoComp
+    },
+    props: ['logoDark'],
+    data() {
+        return {};
+    },
 };

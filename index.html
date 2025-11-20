@@ -1,110 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <!--Fonts-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <title>Shrek's Swamp Tasks</title>
 
-    <style>
-        .my-card {
-            margin-bottom: 15px;
-        }
+  <style>
+    :root {
+      --swamp-green: #3a5f0b;
+      --swamp-dark: #1f3a08;
+      --swamp-light: #6b8c21;
+      --onion: #d8a8e8;
+      --donkey: #8b7355;
+      --fiona: #ffb6c1;
+      --dragon: #ff4500;
+    }
 
-        .completetodo {
-            background: green;
+    body {
+      background-color: var(--swamp-dark);
+      color: #fff;
+      font-family: 'Patrick Hand', cursive;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><path d="M20,20 C40,0 60,40 80,20 C100,0 100,100 80,80 C60,60 40,100 20,80 C0,60 0,40 20,20 Z" fill="%233a5f0b"/></svg>');
+    }
 
-        }
+    .container {
+      background-color: rgba(31, 58, 8, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      border: 3px solid var(--swamp-light);
+    }
 
-        .incompletetodo {
-            background: rosybrown;
-        }
+    .my-card {
+      margin-bottom: 15px;
+      background-color: var(--swamp-green);
+      border-radius: 10px;
+      border: 2px solid var(--swamp-light);
+      padding: 15px;
+      transition: all 0.3s ease;
+    }
 
-        .logoDark {
-            border: 2px solid black;
-        }
+    .my-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
 
-        .logoGreen {
-            border: 2px solid green;
-        }
-        .selected-todo-border {
-            border: 2px solid red;
-        }
-    </style>
+    .completetodo {
+      background: var(--swamp-light);
+      border-left: 5px solid #4CAF50;
+    }
+
+    .incompletetodo {
+      background: var(--swamp-green);
+      border-left: 5px solid var(--dragon);
+    }
+
+    .logoDark {
+      border: 3px solid var(--swamp-dark);
+      box-shadow: 0 0 10px var(--swamp-dark);
+    }
+
+    .logoGreen {
+      border: 3px solid var(--swamp-light);
+      box-shadow: 0 0 10px var(--swamp-light);
+    }
+
+    .selected-todo-border {
+      border: 3px solid var(--onion) !important;
+      box-shadow: 0 0 15px var(--onion);
+    }
+
+    h1, h2, h3 {
+      color: var(--swamp-light);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-primary {
+      background-color: var(--swamp-light);
+      border-color: var(--swamp-green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--swamp-green);
+      border-color: var(--swamp-dark);
+    }
+
+    .btn-outline-primary {
+      color: var(--swamp-light);
+      border-color: var(--swamp-light);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--swamp-light);
+      color: white;
+      border-color: var(--swamp-light);
+    }
+
+    .btn-outline-success {
+      color: var(--onion);
+      border-color: var(--onion);
+    }
+
+    .btn-outline-success:hover {
+      background-color: var(--onion);
+      color: white;
+      border-color: var(--onion);
+    }
+
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--swamp-light);
+      color: white;
+    }
+
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: var(--onion);
+      color: white;
+      box-shadow: 0 0 0 0.25rem rgba(106, 140, 33, 0.25);
+    }
+
+    .form-label {
+      color: var(--swamp-light);
+      font-weight: bold;
+    }
+
+    .header-title {
+      font-size: 2.5rem;
+      color: var(--swamp-light);
+      text-shadow: 3px 3px 0 var(--swamp-dark);
+    }
+
+    .subtitle {
+      color: var(--onion);
+      font-style: italic;
+    }
+
+    .todo-title {
+      color: var(--fiona);
+      font-weight: bold;
+    }
+
+    .todo-description {
+      color: #ddd;
+    }
+
+    .subtask-item {
+      background-color: rgba(31, 58, 8, 0.5);
+      border-radius: 5px;
+      padding: 8px;
+      margin: 5px 0;
+      border-left: 3px solid var(--donkey);
+    }
+
+    .error-box {
+      background-color: rgba(255, 69, 0, 0.2);
+      border: 2px solid var(--dragon);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .shrek-quote {
+      font-style: italic;
+      color: var(--onion);
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .swamp-footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      border-top: 2px solid var(--swamp-light);
+      color: var(--swamp-light);
+    }
+  </style>
 </head>
 
 <body>
 <div class="container" id="vue-app">
+  <!-- Header Component -->
+  <header-comp :logo-dark="cssClassLogo" @click="changeLogoColor()"></header-comp>
 
-    <header-comp :logo-dark="cssClassLogo" @click="changeLogoColor()"></header-comp>
-    <div class="row">
-        <div class="col-12">
-            <title-comp :sub-title="subTitle"></title-comp>
-        </div>
+  <div class="row">
+    <div class="col-12">
+      <!-- Title Component -->
+      <title-comp :sub-title="subTitle"></title-comp>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <!-- Todo Cards -->
+      <todo-card-comp v-for="(todo, index) in todos" :key="todo.id"
+                      :todo="todo"
+                      :selected-todo-id="selectedTodoId"
+                      @change-todo-status="changeTodoStatus"
+                      @delete-todo="deleteTodo"
+                      @select-todo-id="selectTodoId"
+      ></todo-card-comp>
+
+      <div v-if="todos.length === 0" class="text-center p-4">
+        <h4 class="text-muted">No tasks in the swamp yet!</h4>
+        <p>Add your first task to get started.</p>
+      </div>
     </div>
 
-    <div class="row">
-        <div class="col-6">
-            <todo-card-comp v-for="(todo, index) in todos" :key="todo.id"
-                            :todo="todo"
-                            :selected-todo-id="selectedTodoId"
-                            @change-todo-status="changeTodoStatus"
-                            @delete-todo="deleteTodo"
-                            @select-todo-id="selectTodoId"
+    <div class="col-12 col-lg-6 mb-3">
+      <!-- Form Toggle Buttons -->
+      <div class="d-grid gap-2 d-md-block mb-4 text-center">
+        <button type="button" class="btn me-2"
+                :class="formMode === 'task' ? 'btn-primary' : 'btn-outline-primary'"
+                @click="formMode = 'task'">Todo Task</button>
+        <button type="button" class="btn"
+                :class="formMode === 'subtask' ? 'btn-success' : 'btn-outline-success'"
+                @click="formMode = 'subtask'">Subtask</button>
+      </div>
 
-            ></todo-card-comp>
-        </div>
+      <!-- Task Form -->
+      <div v-if="formMode === 'task'" class="p-3 rounded" style="background-color: rgba(31, 58, 8, 0.5);">
+        <h3 class="text-center mb-3">Add New Task</h3>
+        <form @submit.prevent="addTodo()">
+          <div class="mb-3">
+            <label for="todo" class="form-label">Task Name</label>
+            <input v-model="todoName" type="text" class="form-control" id="todo"
+                   placeholder="What needs to be done?">
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea v-model="todoDescription" class="form-control" id="description" rows="3"
+                      placeholder="Describe your task..."></textarea>
+          </div>
+          <button class="btn btn-primary w-100" type="submit">Add to Swamp</button>
+        </form>
+      </div>
 
-        <div class="col-6 mb-3">
-            <button type="button" class="btn btn-outline-primary" @click="selectFormMode()">Todo Task</button>
-            <button type="button" class="btn btn-outline-success" @click="selectFormMode()">Subtask</button>
-
-            <div v-if="formMode === 'task'">
-                <form @submit.prevent="addTodo()">
-                    <h2>Todo Task</h2>
-                    <div class="mb-3">
-                        <label for="todo" class="form-label">Todo Name</label>
-                        <input v-model="todoName" type="text" class="form-control" id="todo"
-                               placeholder="enter your todo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea v-model="todoDescription" class="form-control" id="description" rows="3"></textarea>
-                    </div>
-                    <button class="btn btn-primary" type="submit">Submit</button>
-                </form>
-            </div>
-            <div v-else>
-                <form @submit.prevent="addSubtasks(selectedTodoId)">
-                    <h2>Subtask</h2>
-                    <div class="mb-3">
-                        <label for="subtask" class="form-label">Subtask name</label>
-                        <input v-model="subtaskName" type="text" class="form-control" id="subtask"
-                               placeholder="enter subtask">
-                    </div>
-                    <div class="mb-3">
-                        <label for="time" class="form-label">Estimated time</label>
-                        <input v-model="subtaskEstimatedTime" type="number" class="form-control" id="time"
-                               placeholder="enter time">
-                    </div>
-                    <div class="mb-3">
-                        <label for="executor" class="form-label">Executor</label>
-                        <input v-model="subtaskExecutor" type="text" class="form-control" id="executor"
-                               placeholder="enter a name">
-                    </div>
-                    <button class="btn btn-primary" type="submit">Submit</button>
-                </form>
-            </div>
-        </div>
-
-        <server-errors-comp v-if="serverErrors.length > 0" :server-errors="serverErrors"></server-errors-comp>
-
+      <!-- Subtask Form -->
+      <div v-else class="p-3 rounded" style="background-color: rgba(31, 58, 8, 0.5);">
+        <h3 class="text-center mb-3">Add Subtask</h3>
+        <p v-if="!selectedTodoId" class="text-warning text-center">
+          Select a task first to add subtasks!
+        </p>
+        <form v-else @submit.prevent="addSubtasks(selectedTodoId)">
+          <div class="mb-3">
+            <label for="subtask" class="form-label">Subtask Name</label>
+            <input v-model="subtaskName" type="text" class="form-control" id="subtask"
+                   placeholder="What's the smaller task?">
+          </div>
+          <div class="mb-3">
+            <label for="time" class="form-label">Estimated Time (minutes)</label>
+            <input v-model="subtaskEstimatedTime" type="number" class="form-control" id="time"
+                   placeholder="How long will it take?">
+          </div>
+          <div class="mb-3">
+            <label for="executor" class="form-label">Assigned To</label>
+            <input v-model="subtaskExecutor" type="text" class="form-control" id="executor"
+                   placeholder="Who's doing this?">
+          </div>
+          <button class="btn btn-success w-100" type="submit">Add Subtask</button>
+        </form>
+      </div>
     </div>
+
+    <!-- Server Errors -->
+    <div v-if="serverErrors.length > 0" class="col-12">
+      <div class="error-box">
+        <h4 class="text-danger">Dragon Alert! Server Issues:</h4>
+        <ul>
+          <li v-for="error in serverErrors" :key="error">{{ error }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="swamp-footer">
+    <p>Shrek's Swamp Tasks &copy; 2025 - All ogre the place!</p>
+  </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+<!--Connect components-->
 <script src="components/LogoComp.js"></script>
 <script src="components/HeaderComp.js"></script>
 <script src="components/TitleComp.js"></script>
@@ -112,120 +299,140 @@
 <script src="components/ServerErrorsComp.js"></script>
 <script src="components/TodoCardComp.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script defer>
+  Vue.createApp({
+    components: {
+      'title-comp': TitleComp,
+      'header-comp': HeaderComp,
+      'todo-card-comp': TodoCardComp,
+      'server-errors-comp': ServerErrorsComp
+    },
+    data() {
+      return {
+        todos: [],
+        todoName: '',
+        todoDescription: '',
+        isTodoCompleted: false,
+        subTitle: 'Good day in the swamp!',
+        cssClassLogo: 'logoGreen',
+        formMode: 'task', // task and subtask
 
-    Vue.createApp({
-        components: {
-            'title-comp': TitleComp,
-            'header-comp': HeaderComp,
-            'todo-card-comp': TodoCardComp,
-            'server-errors-comp': ServerErrorsComp
-        },
-        data() {
-            return {
-                todos: [],
-                todoName: '',
-                todoDescription: '',
-                isTodoCompleted: false,
-                subTitle: 'good day',
-                cssClassLogo: 'logoGreen',
-                formMode: 'task', // task and subtask
+        subtaskName: '',
+        subtaskExecutor: '',
+        subtaskEstimatedTime: '',
+        selectedTodoId: 1,
+        subtasks: [],
 
-                subtaskName: '',
-                subtaskExecutor: '',
-                subtaskEstimatedTime: '',
-                selectedTodoId: '',
-                subtasks: [],
+        serverErrors: []
+      }
+    },
+    methods: {
+      addTodo() {
+        if (!this.todoName.trim()) return;
 
-                serverErrors: []
-            }
-        },
-        methods: {
-            addTodo() {
-                this.todos.push({
-                    id: this.calculateNextId(),
-                    name: this.todoName,
-                    isDone: false,
-                    description: this.todoDescription,
-                    subtasks: []
-                })
-                this.todoName = ''
-                this.todoDescription = ''
-                this.todos = this.sortByStatusAndId()
-            },
-            calculateNextId() {
-                return Math.max(...this.todos.map(todo => todo.id)) + 1
-            },
-            changeTodoStatus(todo) {
-                todo.isDone = !todo.isDone
-                this.todos = this.sortByStatusAndId()
-            },
-            sortByStatusAndId() {
-                return this.todos.sort((a, b) => {
-                    // Сначала сортируем по статусу (невыполненные первыми)
-                    if (a.isDone !== b.isDone) {
-                        return a.isDone ? 1 : -1;
-                    }
-                    // Если статус одинаковый, сортируем по ID
-                    return a.id - b.id;
-                });
-            },
-            changeLogoColor() {
-                this.cssClassLogo = this.cssClassLogo === 'logoGreen' ? 'logoDark' : 'logoGreen'
-            },
-            deleteTodo(id) {
-                this.todos = this.todos.filter((todo) => todo.id !== id)
-                this.todos = this.sortByStatusAndId()
-            },
-            selectFormMode() {
-                this.formMode = this.formMode === 'task' ? 'subtask' : 'task'
-            },
-            selectTodoId(id) {
-                this.formMode = 'subtask'
-                let todo = this.todos.find((todo) => todo.id === id)
-                this.selectedTodoId = todo.id
-                console.log(this.selectedTodoId)
-            },
-            addSubtasks(selectedTodoId) {
-                let todo = this.todos.find((todo) => selectedTodoId === todo.id)
-                let subtasks = todo.subtasks
-                subtasks.push ({
-                    subtaskName: this.subtaskName,
-                    subtaskExecutor: this.subtaskExecutor,
-                    subtaskEstimatedTime: this.subtaskEstimatedTime
-                })
-                this.subtaskName = ''
-                this.subtaskExecutor = ''
-                this.subtaskEstimatedTime = ''
-            }
-        },
-        mounted() {
-            let url = "http://localhost:8010/api/todo/get-all"
-            fetch(url)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("smth wrong, status code = " + response.status)
-                    } else {
-                        return response.json()
-                    }
-                })
-                .then((result) => {
-                    if (!result.success) {
-                        this.serverErrors = result.errors
-                    } else {
-                        let todos = result.data
-                        this.todos = todos
-                    }
-                })
-                .catch((error) => {
-                    console.log(error.message)
-                })
+        this.todos.push({
+          id: this.calculateNextId(),
+          name: this.todoName,
+          isDone: false,
+          description: this.todoDescription,
+          subtasks: []
+        })
+        this.todoName = ''
+        this.todoDescription = ''
+        this.todos = this.sortByStatusAndId()
+      },
+      calculateNextId() {
+        if (this.todos.length === 0) return 1;
+        return Math.max(...this.todos.map(todo => todo.id)) + 1
+      },
+      changeTodoStatus(todo) {
+        todo.isDone = !todo.isDone
+        this.todos = this.sortByStatusAndId()
+      },
+      sortByStatusAndId() {
+        return this.todos.sort((a, b) => {
+          // Sort by status (incomplete first)
+          if (a.isDone !== b.isDone) {
+            return a.isDone ? 1 : -1;
+          }
+          // If status is the same, sort by ID
+          return a.id - b.id;
+        });
+      },
+      changeLogoColor() {
+        this.cssClassLogo = this.cssClassLogo === 'logoGreen' ? 'logoDark' : 'logoGreen'
+      },
+      deleteTodo(id) {
+        this.todos = this.todos.filter((todo) => todo.id !== id)
+        this.todos = this.sortByStatusAndId()
+      },
+      selectTodoId(id) {
+        this.formMode = 'subtask'
+        this.selectedTodoId = id
+      },
+      addSubtasks(selectedTodoId) {
+        if (!this.subtaskName.trim()) return;
+
+        let todo = this.todos.find((todo) => selectedTodoId === todo.id)
+        if (!todo.subtasks) {
+          todo.subtasks = []
         }
+        todo.subtasks.push({
+          subtaskName: this.subtaskName,
+          subtaskExecutor: this.subtaskExecutor,
+          subtaskEstimatedTime: this.subtaskEstimatedTime
+        })
+        this.subtaskName = ''
+        this.subtaskExecutor = ''
+        this.subtaskEstimatedTime = ''
+      }
+    },
+    mounted() {
+      console.log("🧅 Peeling back the layers to fetch your tasks...");
 
-    }).mount("#vue-app")
+      let url = "http://localhost:8010/api/shrek/get-tasks"
+      fetch(url)
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("🔥 The dragon burned our bridge! Status: " + response.status)
+                } else {
+                  console.log("🏰 Successfully entered Duloc (I mean, got your data)!");
+                  return response.json()
+                }
+              })
+              .then((result) => {
+                if (!result.success) {
+                  console.log("👑 Farquaad is messing with our data!");
+                  this.serverErrors = result.errors.map(error => `❌ ${error}`)
+                } else {
+                  console.log("✨ Bibbidi-Bobbidi-Boo! Your tasks have arrived!");
+                  let todos = result.data
+                  this.todos = todos
 
+                  // Fun Shrek-themed status messages
+                  if (this.todos.length === 0) {
+                    this.subTitle = "The swamp is empty - better get to work!"
+                  } else if (this.todos.length === 1) {
+                    this.subTitle = "Just one lonely task in the swamp..."
+                  } else {
+                    const messages = [
+                      `${this.todos.length} tasks waiting in the swamp!`,
+                      `You've got ${this.todos.length} fairy tale tasks!`,
+                      `${this.todos.length} adventures await!`,
+                      `Donkey would be proud of your ${this.todos.length} tasks!`
+                    ];
+                    this.subTitle = messages[Math.floor(Math.random() * messages.length)];
+                  }
+                }
+              })
+              .catch((error) => {
+                console.log("💢 Ogre-rific error: " + error.message)
+                this.serverErrors = ["The Magic Mirror says: Couldn't connect to the swamp! Make sure your server is running on localhost:8010"]
+                this.subTitle = "The swamp path is blocked!"
+              })
+    }
+
+  }).mount("#vue-app")
 </script>
 </body>
-
 </html>

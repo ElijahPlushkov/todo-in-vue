@@ -1,26 +1,43 @@
 const TodoCardComp = {
     template: `
-        <div class="card my-card" :class="selectedTodoId === todo.id ? 'selected-todo-border' : ''"
-        style="width: 18rem;" >
-            <div class="card-body" :class="todo.isDone ? 'completetodo' : 'incompletetodo'">
-            <p class="card-text">{{ todo.id }}</p>
-                <h1>{{todo.id}}</h1>
-                <h5 class="card-title">{{ todo.name }}</h5>
-                <p class="card-text">{{ todo.description }}</p>
+        <div class="card my-card" 
+         :class="[todo.isDone ? 'completetodo' : 'incompletetodo', selectedTodoId === todo.id ? 'selected-todo-border' : '']"
+         @click="$emit('select-todo-id', todo.id)">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <h5 class="card-title todo-title">{{ todo.name }}</h5>
+                    <p class="card-text todo-description">{{ todo.description }}</p>
+                    
+                    <div v-if="todo.subtasks && todo.subtasks.length > 0">
+                        <h6 class="text-warning mt-3">Subtasks:</h6>
+                        <subtasks-comp 
+                            v-for="(subtask, index) in todo.subtasks" 
+                            :key="index"
+                            :subtask="subtask"
+                        ></subtasks-comp>
+                    </div>
+                </div>
                 
-                <h5>Subtasks</h5>
-                <subtasks-comp v-for="(subtask, index) in todo.subtasks" :key="subtask.id"
-                    :subtask="subtask"
-                ></subtasks-comp>
-                
-                <a href="#" class="btn btn-primary" @click="$emit('change-todo-status', todo)">{{ todo.isDone ? "undo" :
-                        "done" }}</a>
-                        <a href="#" class="btn btn-danger" @click="$emit('delete-todo', todo.id)">delete todo</a>
-                        <a href="#" class="btn btn-success" @click="$emit('select-todo-id', todo.id)">add subtasks</a>
+                <div class="d-flex flex-column ms-3">
+                    <button class="btn btn-sm mb-2" 
+                            :class="todo.isDone ? 'btn-success' : 'btn-warning'"
+                            @click.stop="$emit('change-todo-status', todo)">
+                        {{ todo.isDone ? 'Completed!' : 'Mark Complete' }}
+                    </button>
+                    <button class="btn btn-sm btn-danger mb-2" 
+                            @click.stop="$emit('delete-todo', todo.id)">
+                        Delete
+                    </button>
+                    <button class="btn btn-sm" 
+                            :class="selectedTodoId === todo.id ? 'btn-primary' : 'btn-outline-primary'"
+                            @click.stop="$emit('select-todo-id', todo.id)">
+                        Add Subtasks
+                    </button>
+                </div>
             </div>
         </div>`,
     components: {
-      'subtasks-comp': SubtasksComp
+        'subtasks-comp': SubtasksComp
     },
     props: ['todo', 'selectedTodoId']
 }

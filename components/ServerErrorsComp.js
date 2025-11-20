@@ -1,11 +1,13 @@
 const ServerErrorsComp = {
     template: `
-        <div v-for="(serverError) in serverErrors" :key="serverError"
-            class="alert alert-danger alert-dismissible fade show" role="alert"
-        >
-            {{ serverError }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="error-box">
+        <h4 class="text-danger">Dragon Alert! Server Issues:</h4>
+        <ul>
+          <li v-for="(serverError) in serverErrors" :key="serverError">{{ serverError }}</li>
+        </ul>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     `,
     props: {
         serverErrors: {
