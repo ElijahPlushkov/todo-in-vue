@@ -217,71 +217,9 @@
       </div>
     </div>
 
-    <div class="col-12 col-lg-6 mb-3">
-      <!-- Form Toggle Buttons -->
-      <div class="d-grid gap-2 d-md-block mb-4 text-center">
-        <button type="button" class="btn me-2"
-                :class="formMode === 'task' ? 'btn-primary' : 'btn-outline-primary'"
-                @click="formMode = 'task'">Todo Task</button>
-        <button type="button" class="btn"
-                :class="formMode === 'subtask' ? 'btn-success' : 'btn-outline-success'"
-                @click="formMode = 'subtask'">Subtask</button>
-      </div>
+    <main-form-comp @add-todo="addTodo" :selected-todo-id="selectedTodoId" @create-new-subtask="addSubtasks"></main-form-comp>
 
-      <!-- Task Form -->
-      <div v-if="formMode === 'task'" class="p-3 rounded" style="background-color: rgba(31, 58, 8, 0.5);">
-        <h3 class="text-center mb-3">Add New Task</h3>
-        <form @submit.prevent="addTodo()">
-          <div class="mb-3">
-            <label for="todo" class="form-label">Task Name</label>
-            <input v-model="todoName" type="text" class="form-control" id="todo"
-                   placeholder="What needs to be done?">
-          </div>
-          <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea v-model="todoDescription" class="form-control" id="description" rows="3"
-                      placeholder="Describe your task..."></textarea>
-          </div>
-          <button class="btn btn-primary w-100" type="submit">Add to Swamp</button>
-        </form>
-      </div>
-
-      <!-- Subtask Form -->
-      <div v-else class="p-3 rounded" style="background-color: rgba(31, 58, 8, 0.5);">
-        <h3 class="text-center mb-3">Add Subtask</h3>
-        <p v-if="!selectedTodoId" class="text-warning text-center">
-          Select a task first to add subtasks!
-        </p>
-        <form v-else @submit.prevent="addSubtasks(selectedTodoId)">
-          <div class="mb-3">
-            <label for="subtask" class="form-label">Subtask Name</label>
-            <input v-model="subtaskName" type="text" class="form-control" id="subtask"
-                   placeholder="What's the smaller task?">
-          </div>
-          <div class="mb-3">
-            <label for="time" class="form-label">Estimated Time (minutes)</label>
-            <input v-model="subtaskEstimatedTime" type="number" class="form-control" id="time"
-                   placeholder="How long will it take?">
-          </div>
-          <div class="mb-3">
-            <label for="executor" class="form-label">Assigned To</label>
-            <input v-model="subtaskExecutor" type="text" class="form-control" id="executor"
-                   placeholder="Who's doing this?">
-          </div>
-          <button class="btn btn-success w-100" type="submit">Add Subtask</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Server Errors -->
-    <div v-if="serverErrors.length > 0" class="col-12">
-      <div class="error-box">
-        <h4 class="text-danger">Dragon Alert! Server Issues:</h4>
-        <ul>
-          <li v-for="error in serverErrors" :key="error">{{ error }}</li>
-        </ul>
-      </div>
-    </div>
+    <server-errors-comp v-if="serverErrors.length > 0" :server-errors="serverErrors"></server-errors-comp>
   </div>
 
   <div class="swamp-footer">
@@ -292,51 +230,44 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
 <!--Connect components-->
+<script src="components/taskForm/TaskForm.js"></script>
+<script src="components/taskForm/SubTaskFormComp.js"></script>
+<script src="components/taskForm/MainFormComp.js"></script>
 <script src="components/LogoComp.js"></script>
 <script src="components/HeaderComp.js"></script>
 <script src="components/TitleComp.js"></script>
 <script src="components/SubtasksComp.js"></script>
 <script src="components/ServerErrorsComp.js"></script>
 <script src="components/TodoCardComp.js"></script>
+<script src="./modules/subtitleIdentifier.js"></script>
 
-<script defer>
+<script type="module">
+
   Vue.createApp({
     components: {
       'title-comp': TitleComp,
       'header-comp': HeaderComp,
       'todo-card-comp': TodoCardComp,
-      'server-errors-comp': ServerErrorsComp
+      'server-errors-comp': ServerErrorsComp,
+      'main-form-comp': MainFormComp
     },
     data() {
       return {
         todos: [],
-        todoName: '',
-        todoDescription: '',
         isTodoCompleted: false,
         subTitle: 'Good day in the swamp!',
         cssClassLogo: 'logoGreen',
-        formMode: 'task', // task and subtask
+        // formMode: 'task', // task and subtask
 
-        subtaskName: '',
-        subtaskExecutor: '',
-        subtaskEstimatedTime: '',
-        selectedTodoId: 1,
-        subtasks: [],
+        selectedTodoId: 0,
 
         serverErrors: []
       }
     },
     methods: {
-      addTodo() {
-        if (!this.todoName.trim()) return;
+      addTodo(todo) {
 
-        this.todos.push({
-          id: this.calculateNextId(),
-          name: this.todoName,
-          isDone: false,
-          description: this.todoDescription,
-          subtasks: []
-        })
+        this.todos.push(todo)
         this.todoName = ''
         this.todoDescription = ''
         this.todos = this.sortByStatusAndId()
@@ -367,28 +298,22 @@
         this.todos = this.sortByStatusAndId()
       },
       selectTodoId(id) {
-        this.formMode = 'subtask'
         this.selectedTodoId = id
       },
-      addSubtasks(selectedTodoId) {
-        if (!this.subtaskName.trim()) return;
-
-        let todo = this.todos.find((todo) => selectedTodoId === todo.id)
+      addSubtasks(newSubtask) {
+        let todo = this.todos.find((todo) => this.selectedTodoId === todo.id)
         if (!todo.subtasks) {
           todo.subtasks = []
         }
         todo.subtasks.push({
-          subtaskName: this.subtaskName,
-          subtaskExecutor: this.subtaskExecutor,
-          subtaskEstimatedTime: this.subtaskEstimatedTime
+          subtaskName: newSubtask.name,
+          subtaskExecutor: newSubtask.executor,
+          subtaskEstimatedTime: newSubtask.estimatedTime
         })
-        this.subtaskName = ''
-        this.subtaskExecutor = ''
-        this.subtaskEstimatedTime = ''
+
       }
     },
     mounted() {
-      console.log("🧅 Peeling back the layers to fetch your tasks...");
 
       let url = "http://localhost:8010/api/shrek/get-tasks"
       fetch(url)
@@ -396,37 +321,20 @@
                 if (!response.ok) {
                   throw new Error("🔥 The dragon burned our bridge! Status: " + response.status)
                 } else {
-                  console.log("🏰 Successfully entered Duloc (I mean, got your data)!");
                   return response.json()
                 }
               })
               .then((result) => {
                 if (!result.success) {
-                  console.log("👑 Farquaad is messing with our data!");
                   this.serverErrors = result.errors.map(error => `❌ ${error}`)
                 } else {
-                  console.log("✨ Bibbidi-Bobbidi-Boo! Your tasks have arrived!");
                   let todos = result.data
                   this.todos = todos
 
-                  // Fun Shrek-themed status messages
-                  if (this.todos.length === 0) {
-                    this.subTitle = "The swamp is empty - better get to work!"
-                  } else if (this.todos.length === 1) {
-                    this.subTitle = "Just one lonely task in the swamp..."
-                  } else {
-                    const messages = [
-                      `${this.todos.length} tasks waiting in the swamp!`,
-                      `You've got ${this.todos.length} fairy tale tasks!`,
-                      `${this.todos.length} adventures await!`,
-                      `Donkey would be proud of your ${this.todos.length} tasks!`
-                    ];
-                    this.subTitle = messages[Math.floor(Math.random() * messages.length)];
-                  }
+                  this.subTitle = getSubtitle(this.todos.length)
                 }
               })
               .catch((error) => {
-                console.log("💢 Ogre-rific error: " + error.message)
                 this.serverErrors = ["The Magic Mirror says: Couldn't connect to the swamp! Make sure your server is running on localhost:8010"]
                 this.subTitle = "The swamp path is blocked!"
               })
