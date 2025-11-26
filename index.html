@@ -209,6 +209,7 @@
                       @change-todo-status="changeTodoStatus"
                       @delete-todo="deleteTodo"
                       @select-todo-id="selectTodoId"
+                      @delete-subtask="deleteSubtask"
       ></todo-card-comp>
 
       <div v-if="todos.length === 0" class="text-center p-4">
@@ -217,7 +218,12 @@
       </div>
     </div>
 
-    <main-form-comp @add-todo="addTodo" :selected-todo-id="selectedTodoId" @create-new-subtask="addSubtasks"></main-form-comp>
+    <main-form-comp :next-todo-id="nextTodoId"
+                    :form-mode="formMode" @add-todo="addTodo"
+                    :selected-todo-id="selectedTodoId"
+                    @create-new-subtask="addSubtasks"
+                    @change-form-mode="changeFormMode"
+    ></main-form-comp>
 
     <server-errors-comp v-if="serverErrors.length > 0" :server-errors="serverErrors"></server-errors-comp>
   </div>
@@ -257,11 +263,19 @@
         isTodoCompleted: false,
         subTitle: 'Good day in the swamp!',
         cssClassLogo: 'logoGreen',
-        // formMode: 'task', // task and subtask
+        formMode: 'task', // task and subtask
 
         selectedTodoId: 0,
 
         serverErrors: []
+        // todo: {id, name, isDone, description, subtasks} ????
+        // subtask: {subtaskName, subtaskEstimatedTime, subtaskExecutor} ????
+      }
+    },
+    computed: {
+      nextTodoId() {
+        if (this.todos.length === 0) return 1;
+        return Math.max(...this.todos.map(todo => todo.id)) + 1
       }
     },
     methods: {
@@ -272,10 +286,10 @@
         this.todoDescription = ''
         this.todos = this.sortByStatusAndId()
       },
-      calculateNextId() {
-        if (this.todos.length === 0) return 1;
-        return Math.max(...this.todos.map(todo => todo.id)) + 1
-      },
+      // calculateNextId() {
+      //   if (this.todos.length === 0) return 1;
+      //   return Math.max(...this.todos.map(todo => todo.id)) + 1
+      // },
       changeTodoStatus(todo) {
         todo.isDone = !todo.isDone
         this.todos = this.sortByStatusAndId()
@@ -298,6 +312,7 @@
         this.todos = this.sortByStatusAndId()
       },
       selectTodoId(id) {
+        this.formMode = 'subtask'
         this.selectedTodoId = id
       },
       addSubtasks(newSubtask) {
@@ -310,7 +325,14 @@
           subtaskExecutor: newSubtask.executor,
           subtaskEstimatedTime: newSubtask.estimatedTime
         })
-
+      },
+      deleteSubtask(subtaskName) {
+        console.log(subtaskName) // ничего не приходит (undefined)
+        let todo = this.todos.find((todo) => this.selectedTodoId === todo.id)
+        todo.subtasks = todo.subtasks.filter((subtask) => subtask.subtaskName !== subtaskName)
+      },
+      changeFormMode() {
+        return this.formMode = this.formMode === 'task' ? 'subtask' : 'task'
       }
     },
     mounted() {

@@ -11,9 +11,9 @@ const TodoCardComp = {
                     <div v-if="todo.subtasks && todo.subtasks.length > 0">
                         <h6 class="text-warning mt-3">Subtasks:</h6>
                         <subtasks-comp 
-                            v-for="(subtask, index) in todo.subtasks" 
-                            :key="index"
+                            v-for="(subtask, index) in todo.subtasks" :key="index"
                             :subtask="subtask"
+                            @delete-subtask="$emit('delete-subtask', $event)"
                         ></subtasks-comp>
                     </div>
                 </div>
@@ -39,5 +39,10 @@ const TodoCardComp = {
     components: {
         'subtasks-comp': SubtasksComp
     },
-    props: ['todo', 'selectedTodoId']
+    props: ['todo', 'selectedTodoId'],
+    methods: {
+        deleteSubtask(subtaskName) {
+            this.$emit('delete-subtask', subtaskName)
+        }
+    }
 }

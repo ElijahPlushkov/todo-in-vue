@@ -6,6 +6,12 @@ const SubtasksComp = {
                 <li>Estimated: {{ subtask.subtaskEstimatedTime }} minutes</li>
                 <li>Assigned to: {{ subtask.subtaskExecutor }}</li>
             </ul>
+            <button @click="$emit('delete-subtask', subtask.subtaskName)">X</button>
         </div>`,
-    props: ['subtask']
+    props: {
+        subtask: {
+            type: Object,
+            required: true
+        }
+    }
 }
