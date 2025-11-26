@@ -21,6 +21,10 @@ const TaskForm = {
         formMode: {
             type: String,
             required: true
+        },
+        nextTodoId: {
+            type: Number,
+            required: true
         }
     },
     data() {
@@ -32,14 +36,13 @@ const TaskForm = {
     methods: {
         addTodo() {
             let todo = {
-                id: Date.now(),
+                id: this.nextTodoId,
                 name: this.todoName,
                 isDone: false,
                 description: this.todoDescription,
                 subtasks: []
             }
 
-            console.log(todo)
             this.$emit('add-todo', todo)
 
             this.todoName = ''
